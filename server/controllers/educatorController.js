@@ -6,9 +6,8 @@ import { Purchase } from '../models/Purchase.js'
 // update role to educator
 export const updateRoleToEducator = async (req, res)=>{
     try {
-        const userId = req.auth.userId
-
-        await clerkClient.users.updateUserMetadata(userId, {
+    const { userId } = await req.auth();     
+    await clerkClient.users.updateUserMetadata(userId, {
             publicMetadata: {
                 role: 'educator',
             }        
@@ -33,7 +32,7 @@ export const addCourse = async ( req, res)=> {
         }
 
         const parsedCourseData = await JSON.parse(courseData)
-        // parsedCourseData.educator = educatorId
+        parsedCourseData.educator = educatorId
         const newCourse = await Course.create(parsedCourseData)
         const imageUpload = await cloudinary.uploader.upload(imageFile.path)
         newCourse.courseThumbnail = imageUpload.secure_url
@@ -73,7 +72,7 @@ export const educatorDashboardData = async (req, res)=>{
             status: 'completed'
         });
         
-        const totalEarnings = purchases.reduce((acc, purchase) => sum + purchase.
+        const totalEarnings = purchases.reduce((sum, purchase) => sum + purchase.
         amount, 0);
 
         // Collect unique enrolled student IDs with their course titles

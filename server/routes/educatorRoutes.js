@@ -3,21 +3,17 @@ import { addCourse, educatorDashboardData, getEducatorCourses,
 getEnrolledStudentsData, updateRoleToEducator } from '../controllers/educatorController.js'
 import upload from '../configs/multer.js'
 import { protectEducator } from '../middlewares/authMidddleware.js'
+import { requireAuth } from '@clerk/express';
 
 const educatorRouter = express.Router()
 
 //Add Educator Role
-educatorRouter.get('/update-role', updateRoleToEducator)
-// educatorRouter.post('/add-course', upload.single('image'), protectEducator, 
-// addCourse)
-// educatorRouter.get('/courses', protectEducator, getEducatorCourses)
-
-educatorRouter.post('/add-course', upload.single('image'), 
+educatorRouter.get('/update-role', requireAuth(), updateRoleToEducator)
+educatorRouter.post('/add-course', requireAuth(), upload.single('image'), protectEducator, 
 addCourse)
-educatorRouter.get('/courses', getEducatorCourses)
-// educatorRouter.get('/dashboard', protectEducator, educatorDashboardData)
-// educatorRouter.get('/enrolled-students', protectEducator, getEnrolledStudentsData)
-educatorRouter.get('/dashboard', educatorDashboardData)
-educatorRouter.get('/enrolled-students', getEnrolledStudentsData)
+educatorRouter.get('/courses', requireAuth(), protectEducator, getEducatorCourses)
+educatorRouter.get('/dashboard', requireAuth(), protectEducator, educatorDashboardData)
+educatorRouter.get('/enrolled-students', requireAuth(), protectEducator, getEnrolledStudentsData)
+
 
 export default educatorRouter;
